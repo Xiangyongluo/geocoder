@@ -46,15 +46,13 @@ class OttawaParcelResult(OneResult):
     @property
     def length(self):
         """Length in Feet (f)"""
-        length = self.parse['attributes'].get('Shape_Length')
-        if length:
+        if length := self.parse['attributes'].get('Shape_Length'):
             return round(float(length))
 
     @property
     def area(self):
         """Square Foot Area (sqft)"""
-        area = self.parse['attributes'].get('Shape_Area')
-        if area:
+        if area := self.parse['attributes'].get('Shape_Area'):
             return round(float(area) * 10.76391)
 
     @property

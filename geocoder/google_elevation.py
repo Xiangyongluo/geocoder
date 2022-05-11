@@ -11,10 +11,7 @@ class ElevationResult(OneResult):
 
     @property
     def status(self):
-        if self.elevation:
-            return 'OK'
-        else:
-            return 'ERROR - No Elevation found'
+        return 'OK' if self.elevation else 'ERROR - No Elevation found'
 
     @property
     def ok(self):

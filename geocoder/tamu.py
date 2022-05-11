@@ -20,14 +20,12 @@ class TamuResult(OneResult):
 
     @property
     def lat(self):
-        lat = self.output_geocode.get('Latitude')
-        if lat:
+        if lat := self.output_geocode.get('Latitude'):
             return float(lat)
 
     @property
     def lng(self):
-        lng = self.output_geocode.get('Longitude')
-        if lng:
+        if lng := self.output_geocode.get('Longitude'):
             return float(lng)
 
     @property
@@ -168,7 +166,7 @@ class TamuQuery(MultipleResultsQuery):
         if exception_occured == 'True' or status_code != '200' or exception:
             self.error = exception
 
-        if status_code == '401' or status_code == '470':
+        if status_code in ['401', '470']:
             self.error = u'Tamu returned status_code {0}.  Is API key {1} valid?'.format(status_code, self.key)
 
         return self.error

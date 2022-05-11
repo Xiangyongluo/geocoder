@@ -48,22 +48,18 @@ class Location(object):
                 if g.ok:
                     self.lat, self.lng = g.lat, g.lng
 
-        # Checking for List of Tuple
         elif isinstance(location, (list, tuple)):
             self._check_for_list(location)
 
-        # Checking for Dictionary
         elif isinstance(location, dict):
             self._check_for_dict(location)
 
-        # Checking for a Geocoder Class
         elif hasattr(location, 'latlng'):
             if location.latlng:
                 self.lat, self.lng = location.latlng
 
-        # Result into Error
         else:
-            raise ValueError("Unknown location: %s" % location)
+            raise ValueError(f"Unknown location: {location}")
 
     def _check_for_list(self, location):
         # Standard LatLng list or tuple with 2 number values
@@ -123,9 +119,7 @@ class Location(object):
         return []
 
     def __str__(self):
-        if self.ok:
-            return u'{0}, {1}'.format(self.lat, self.lng)
-        return u''
+        return u'{0}, {1}'.format(self.lat, self.lng) if self.ok else u''
 
 
 class BBox(object):

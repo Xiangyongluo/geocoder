@@ -34,8 +34,7 @@ class TomtomResult(OneResult):
 
     @property
     def bbox(self):
-        viewport = self.raw.get('viewport', {})
-        if viewport:
+        if viewport := self.raw.get('viewport', {}):
             bbox = {
                 'south': viewport.get('btmRightPoint')['lon'],
                 'west': viewport.get('btmRightPoint')['lat'],

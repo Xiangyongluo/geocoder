@@ -98,28 +98,50 @@ class GeonamesQuery(MultipleResultsQuery):
         bbox = kwargs.pop('proximity', None)
         if bbox is not None:
             bbox = BBox.factory(bbox)
-            base_kwargs.update(
-                {'east': bbox.east, 'west': bbox.west,
-                 'north': bbox.north, 'south': bbox.south})
+            base_kwargs |= {
+                'east': bbox.east,
+                'west': bbox.west,
+                'north': bbox.north,
+                'south': bbox.south,
+            }
+
 
         # look out for valid extra kwargs
-        supported_kwargs = set((
-            'name', 'name_equals', 'name_startsWith', 'startRow',
-            'country', 'countryBias', 'continentCode',
-            'adminCode1', 'adminCode2', 'adminCode3', 'cities',
-            'featureClass', 'featureCode',
-            'lang', 'type', 'style',
-            'isNameRequired', 'tag', 'operator', 'charset',
-            'east', 'west', 'north', 'south',
-            'orderby', 'inclBbox',
-        ))
+        supported_kwargs = {
+            'name',
+            'name_equals',
+            'name_startsWith',
+            'startRow',
+            'country',
+            'countryBias',
+            'continentCode',
+            'adminCode1',
+            'adminCode2',
+            'adminCode3',
+            'cities',
+            'featureClass',
+            'featureCode',
+            'lang',
+            'type',
+            'style',
+            'isNameRequired',
+            'tag',
+            'operator',
+            'charset',
+            'east',
+            'west',
+            'north',
+            'south',
+            'orderby',
+            'inclBbox',
+        }
+
         found_kwargs = supported_kwargs & set(kwargs.keys())
         LOGGER.debug("Adding extra kwargs %s", found_kwargs)
 
         # update base kwargs with extra ones
-        base_kwargs.update(dict(
-            [(extra, kwargs[extra]) for extra in found_kwargs]
-        ))
+        base_kwargs |= dict([(extra, kwargs[extra]) for extra in found_kwargs])
+
         return base_kwargs
 
     def _catch_errors(self, json_response):
@@ -127,8 +149,7 @@ class GeonamesQuery(MultipleResultsQuery):
             - totalResultsCount not sytematically returned (e.g in hierarchy)
             - done in base.py
         """
-        status = json_response.get('status')
-        if status:
+        if status := json_response.get('status'):
             message = status.get('message')
             value = status.get('value')
             custom_messages = {

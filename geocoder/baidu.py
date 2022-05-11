@@ -67,10 +67,7 @@ class BaiduQuery(MultipleResultsQuery):
 
         # adapt params to authentication method
         self.security_key = kwargs.get('sk', baidu_security_key)
-        if self.security_key:
-            return self._encode_params(params)
-        else:
-            return params
+        return self._encode_params(params) if self.security_key else params
 
     def _encode_params(self, params):
         # maintain the order of the parameters during signature creation when returning the results
@@ -106,13 +103,11 @@ class BaiduQuery(MultipleResultsQuery):
         params = params.copy()
         address = params.pop('address')
 
-        url = base_url + '?address=' + address + '&' + urlencode(params)
+        url = f'{base_url}?address={address}&{urlencode(params)}'
         encoded_url = quote(url, safe="/:=&?#+!$,;'@()*[]")
 
         signature = quote_plus(encoded_url + self.security_key).encode('utf-8')
-        encoded_signature = hashlib.md5(signature).hexdigest()
-
-        return encoded_signature
+        return hashlib.md5(signature).hexdigest()
 
     def _build_headers(self, provider_key, **kwargs):
         return {'Referer': kwargs.get('referer', 'http://developer.baidu.com')}

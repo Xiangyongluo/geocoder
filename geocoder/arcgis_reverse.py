@@ -75,18 +75,17 @@ class ArcgisReverse(ArcgisQuery):
     def _build_params(self, location, provider_key, **kwargs):
         location = Location(location)
         return {
-            'location': u'{}, {}'.format(location.lng, location.lat),
+            'location': f'{location.lng}, {location.lat}',
             'f': 'pjson',
             'distance': kwargs.get('distance', 50000),
-            'outSR': kwargs.get('outSR', '')
+            'outSR': kwargs.get('outSR', ''),
         }
 
     def _adapt_results(self, json_response):
         return [json_response]
 
     def _catch_errors(self, json_response):
-        error = json_response.get('error', None)
-        if error:
+        if error := json_response.get('error', None):
             self.error = error['message']
 
         return self.error

@@ -23,20 +23,17 @@ class OsmResult(OneResult):
 
     @property
     def lat(self):
-        lat = self.raw.get('lat')
-        if lat:
+        if lat := self.raw.get('lat'):
             return float(lat)
 
     @property
     def lng(self):
-        lng = self.raw.get('lon')
-        if lng:
+        if lng := self.raw.get('lon'):
             return float(lng)
 
     @property
     def bbox(self):
-        _boundingbox = self.raw.get('boundingbox')
-        if _boundingbox:
+        if _boundingbox := self.raw.get('boundingbox'):
             south = float(_boundingbox[0])
             west = float(_boundingbox[2])
             north = float(_boundingbox[1])
@@ -375,7 +372,7 @@ class OsmQueryDetail(MultipleResultsQuery):
             'addressdetails': 1,
             'limit': kwargs.get('maxRows', 1),
         }
-        query.update(kwargs)
+        query |= kwargs
         return query
 
     def _before_initialize(self, location, **kwargs):

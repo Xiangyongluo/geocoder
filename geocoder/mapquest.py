@@ -94,8 +94,7 @@ class MapquestQuery(MultipleResultsQuery):
             'outFormat': 'json',
         }
 
-        bbox = kwargs.get('bbox')
-        if bbox:
+        if bbox := kwargs.get('bbox'):
             bbox = BBox(bbox=bbox)
             params['boundingBox'] = u'{north},{west},{south},{east}'.format(
                 west=bbox.west,
@@ -113,8 +112,7 @@ class MapquestQuery(MultipleResultsQuery):
         return self.error
 
     def _adapt_results(self, json_response):
-        results = json_response.get('results', [])
-        if results:
+        if results := json_response.get('results', []):
             return results[0]['locations']
 
         return []

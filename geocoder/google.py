@@ -42,8 +42,7 @@ class GoogleResult(OneResult):
 
     @property
     def quality(self):
-        quality = self.raw.get('types')
-        if quality:
+        if quality := self.raw.get('types'):
             return quality[0]
 
     @property
@@ -241,10 +240,10 @@ class GoogleQuery(MultipleResultsQuery):
             return None
 
         # assuming parameters will be submitted to Requests in identical order!
-        url = urlparse(base_url + "?" + urlencode(params))
+        url = urlparse(f"{base_url}?{urlencode(params)}")
 
         # We only need to sign the path+query part of the string
-        url_to_sign = (url.path + "?" + url.query).encode('utf-8')
+        url_to_sign = f"{url.path}?{url.query}".encode('utf-8')
 
         # Decode the private key into its binary format
         # We need to decode the URL-encoded private key
@@ -254,11 +253,8 @@ class GoogleQuery(MultipleResultsQuery):
         # string using HMAC SHA1. This signature will be binary.
         signature = hmac.new(decoded_key, url_to_sign, hashlib.sha1)
 
-        # Encode the binary signature into base64 for use within a URL
-        encoded_signature = base64.urlsafe_b64encode(signature.digest())
-
         # Return signature (to be appended as a 'signature' in params)
-        return encoded_signature
+        return base64.urlsafe_b64encode(signature.digest())
 
     def rate_limited_get(self, *args, **kwargs):
         if not self.rate_limit:
@@ -280,7 +276,7 @@ class GoogleQuery(MultipleResultsQuery):
 
     def _catch_errors(self, json_response):
         status = json_response.get('status')
-        if not status == 'OK':
+        if status != 'OK':
             self.error = status
 
         return self.error

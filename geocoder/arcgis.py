@@ -39,8 +39,7 @@ class ArcgisResult(OneResult):
 
     @property
     def bbox(self):
-        _extent = self.raw.get('extent')
-        if _extent:
+        if _extent := self.raw.get('extent'):
             south = _extent.get('ymin')
             west = _extent.get('xmin')
             north = _extent.get('ymax')
@@ -86,8 +85,7 @@ class ArcgisQuery(MultipleResultsQuery):
         return json_response['locations']
 
     def _catch_errors(self, json_response):
-        status = json_response.get('error')
-        if status:
+        if status := json_response.get('error'):
             self.error = status.get('code')
             self.message = status.get('message')
             self.details = status.get('details')

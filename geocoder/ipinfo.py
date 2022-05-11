@@ -13,14 +13,12 @@ class IpinfoResult(OneResult):
 
     @property
     def lat(self):
-        loc = self.raw.get('loc')
-        if loc:
+        if loc := self.raw.get('loc'):
             return Location(loc).lat
 
     @property
     def lng(self):
-        loc = self.raw.get('loc')
-        if loc:
+        if loc := self.raw.get('loc'):
             return Location(loc).lng
 
     @property

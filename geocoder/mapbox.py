@@ -22,14 +22,12 @@ class MapboxResult(OneResult):
 
     @property
     def lat(self):
-        coord = self._geometry['coordinates']
-        if coord:
+        if coord := self._geometry['coordinates']:
             return coord[1]
 
     @property
     def lng(self):
-        coord = self._geometry['coordinates']
-        if coord:
+        if coord := self._geometry['coordinates']:
             return coord[0]
 
     @property
@@ -75,8 +73,7 @@ class MapboxResult(OneResult):
 
     @property
     def bbox(self):
-        _bbox = self.raw.get('bbox')
-        if _bbox:
+        if _bbox := self.raw.get('bbox'):
             west = _bbox[0]
             south = _bbox[1]
             east = _bbox[2]
@@ -122,8 +119,7 @@ class MapboxQuery(MultipleResultsQuery):
                 latitude=proximity.latitude
             )
 
-        bbox = kwargs.get('bbox')
-        if bbox:
+        if bbox := kwargs.get('bbox'):
             bbox = BBox(bbox=bbox)
             # do not forget to convert bbox to mapbox expectations...
             base_params['bbox'] = u'{west},{south},{east},{north}'.format(

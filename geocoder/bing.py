@@ -19,14 +19,12 @@ class BingResult(OneResult):
 
     @property
     def lat(self):
-        coord = self._point['coordinates']
-        if coord:
+        if coord := self._point['coordinates']:
             return coord[0]
 
     @property
     def lng(self):
-        coord = self._point['coordinates']
-        if coord:
+        if coord := self._point['coordinates']:
             return coord[1]
 
     @property
@@ -38,9 +36,8 @@ class BingResult(OneResult):
         if self.street:
             expression = r'\d+'
             pattern = re.compile(expression)
-            match = pattern.search(self.street, re.UNICODE)
-            if match:
-                return match.group(0)
+            if match := pattern.search(self.street, re.UNICODE):
+                return match[0]
 
     @property
     def street(self):
@@ -76,8 +73,7 @@ class BingResult(OneResult):
 
     @property
     def bbox(self):
-        _bbox = self.raw.get('bbox')
-        if _bbox:
+        if _bbox := self.raw.get('bbox'):
             south = _bbox[0]
             north = _bbox[2]
             west = _bbox[1]
@@ -126,17 +122,13 @@ class BingQuery(MultipleResultsQuery):
 
     def _catch_errors(self, json_response):
         status = json_response['statusDescription']
-        if not status == 'OK':
+        if status != 'OK':
             self.error = status
 
         return self.error
 
     def _adapt_results(self, json_response):
-        # extract the array of JSON objects
-        sets = json_response['resourceSets']
-        if sets:
-            return sets[0]['resources']
-        return []
+        return sets[0]['resources'] if (sets := json_response['resourceSets']) else []
 
 
 class BingQueryDetail(MultipleResultsQuery):
@@ -162,17 +154,13 @@ class BingQueryDetail(MultipleResultsQuery):
 
     def _catch_errors(self, json_response):
         status = json_response['statusDescription']
-        if not status == 'OK':
+        if status != 'OK':
             self.error = status
 
         return self.error
 
     def _adapt_results(self, json_response):
-        # extract the array of JSON objects
-        sets = json_response['resourceSets']
-        if sets:
-            return sets[0]['resources']
-        return []
+        return sets[0]['resources'] if (sets := json_response['resourceSets']) else []
 
 
 if __name__ == '__main__':

@@ -15,20 +15,17 @@ class YandexResult(OneResult):
 
     @property
     def lat(self):
-        pos = self.raw.get('Point', {}).get('pos')
-        if pos:
+        if pos := self.raw.get('Point', {}).get('pos'):
             return pos.split(' ')[1]
 
     @property
     def lng(self):
-        pos = self.raw.get('Point', {}).get('pos')
-        if pos:
+        if pos := self.raw.get('Point', {}).get('pos'):
             return pos.split(' ')[0]
 
     @property
     def bbox(self):
-        envelope = self._meta_data.get('boundedBy', {}).get('Envelope', {})
-        if envelope:
+        if envelope := self._meta_data.get('boundedBy', {}).get('Envelope', {}):
             east, north = envelope.get('upperCorner', '').split(' ')
             west, south = envelope.get('lowerCorner', '').split(' ')
             try:

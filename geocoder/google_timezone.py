@@ -11,7 +11,7 @@ from geocoder.location import Location
 class TimezoneResult(OneResult):
 
     def __repr__(self):
-        return u'<[{}] [{}]>'.format(self.status, self.timeZoneName)
+        return f'<[{self.status}] [{self.timeZoneName}]>'
 
     @property
     def ok(self):

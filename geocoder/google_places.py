@@ -47,8 +47,7 @@ class PlacesResult(OneResult):
 
     @property
     def type(self):
-        type = self.raw.get('types')
-        if type:
+        if type := self.raw.get('types'):
             return type[0]
 
     @property

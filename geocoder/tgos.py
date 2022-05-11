@@ -35,8 +35,7 @@ class TgosResult(OneResult):
     def housenumber(self):
         number = self.number
         if number:
-            match = re.match(r'\d+', number)
-            if match:
+            if match := re.match(r'\d+', number):
                 return int(match.group())
         return number
 
@@ -85,8 +84,7 @@ class TgosResult(OneResult):
 
     @property
     def section(self):
-        section = self.raw.get('SECTION')
-        if section:
+        if section := self.raw.get('SECTION'):
             if self.language == 'zh-tw':
                 return {
                     0: u'零',
@@ -169,9 +167,8 @@ class TgosQuery(MultipleResultsQuery):
 
         # TGOS Hash pattern used for TGOS API key
         pattern = re.compile(r'TGOS.tgHash="([a-zA-Z\d/\-_+=]*)"')
-        match = pattern.search(r.text)
-        if match:
-            return match.group(1)
+        if match := pattern.search(r.text):
+            return match[1]
         else:
             raise ValueError('Cannot find TGOS.tgHash')
 
@@ -189,22 +186,18 @@ class TgosQuery(MultipleResultsQuery):
     def _before_initialize(self, location, **kwargs):
         # Custom language output
         language = kwargs.get('language', 'taiwan').lower()
-        if language in ['english', 'en', 'eng']:
-            self.language = 'en'
-        elif language in ['chinese', 'zh']:
-            self.language = 'zh-tw'
-        else:
-            self.language = 'zh-tw'
+        self.language = 'en' if language in ['english', 'en', 'eng'] else 'zh-tw'
 
     def _catch_errors(self, json_response):
         status = json_response['status']
-        if status != 'OK':
-            if status == 'REQUEST_DENIED':
-                self.error = json_response['error_message']
-                self.status_code = 401
-            else:
-                self.error = 'Unknown'
-                self.status_code = 500
+        if status == 'OK':
+            pass
+        elif status == 'REQUEST_DENIED':
+            self.error = json_response['error_message']
+            self.status_code = 401
+        else:
+            self.error = 'Unknown'
+            self.status_code = 500
 
         return self.error
 

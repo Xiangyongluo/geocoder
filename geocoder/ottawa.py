@@ -24,18 +24,16 @@ class OttawaResult(OneResult):
         if self.address:
             expression = r'([ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1}( *\d{1}[A-Z]{1}\d{1})?)'
             pattern = re.compile(expression)
-            match = pattern.search(self.address.upper())
-            if match:
-                return match.group(0)
+            if match := pattern.search(self.address.upper()):
+                return match[0]
 
     @property
     def housenumber(self):
         if self.address:
             expression = r'\d+'
             pattern = re.compile(expression)
-            match = pattern.search(self.address)
-            if match:
-                return int(match.group(0))
+            if match := pattern.search(self.address):
+                return int(match[0])
 
     @property
     def city(self):

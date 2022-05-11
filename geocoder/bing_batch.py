@@ -24,14 +24,12 @@ class BingBatchResult(OneResult):
 
     @property
     def lat(self):
-        coord = self._content
-        if coord:
+        if coord := self._content:
             return coord[0]
 
     @property
     def lng(self):
-        coord = self._content
-        if coord:
+        if coord := self._content:
             return coord[1]
 
     def debug(self, verbose=True):
@@ -83,7 +81,7 @@ class BingBatch(MultipleResultsQuery):
         raise LookupError('No job ID returned from Bing batch call')
 
     def is_job_done(self, job_id):
-        url = u'http://spatial.virtualearth.net/REST/v1/Dataflows/Geocode/{}'.format(job_id)
+        url = f'http://spatial.virtualearth.net/REST/v1/Dataflows/Geocode/{job_id}'
         response = self.session.get(
             url,
             params={'key': self.provider_key},
@@ -101,7 +99,8 @@ class BingBatch(MultipleResultsQuery):
         raise LookupError('Job ID not found in Bing answer - something is wrong')
 
     def get_job_result(self, job_id):
-        url = u'http://spatial.virtualearth.net/REST/v1/Dataflows/Geocode/{}/output/succeeded'.format(job_id)
+        url = f'http://spatial.virtualearth.net/REST/v1/Dataflows/Geocode/{job_id}/output/succeeded'
+
         response = self.session.get(
             url,
             params={'key': self.provider_key},
@@ -156,14 +155,14 @@ class BingBatch(MultipleResultsQuery):
                 if self.is_job_done(resource_id):
                     return self.get_job_result(resource_id)
 
-                elapsed = elapsed + self._BATCH_WAIT
+                elapsed += self._BATCH_WAIT
                 time.sleep(self._BATCH_WAIT)
 
             LOGGER.error("Job was not finished in time.")
 
         except (requests.exceptions.RequestException, LookupError) as err:
             # store real status code and error
-            self.error = u'ERROR - {}'.format(str(err))
+            self.error = f'ERROR - {str(err)}'
             LOGGER.error("Status code %s from %s: %s",
                          self.status_code, self.url, self.error)
 
@@ -173,7 +172,7 @@ class BingBatch(MultipleResultsQuery):
         rows = self._adapt_results(response)
 
         # re looping through the results to give them back in their original order
-        for idx in range(0, self.locations_length):
+        for idx in range(self.locations_length):
             self.add(self.one_result(rows.get(str(idx), None)))
 
         self.current_result = len(self) > 0 and self[0]

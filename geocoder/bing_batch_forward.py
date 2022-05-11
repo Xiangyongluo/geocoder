@@ -18,14 +18,12 @@ class BingBatchForwardResult(BingBatchResult):
 
     @property
     def lat(self):
-        coord = self._content
-        if coord:
+        if coord := self._content:
             return float(coord[0])
 
     @property
     def lng(self):
-        coord = self._content
-        if coord:
+        if coord := self._content:
             return float(coord[1])
 
     @property
@@ -69,11 +67,13 @@ class BingBatchForward(BingBatch):
         # Skipping first line with Bing header
         next(result)
 
-        rows = {}
-        for row in csv.DictReader(result):
-            rows[row['Id']] = [row['GeocodeResponse/Point/Latitude'], row['GeocodeResponse/Point/Longitude']]
-
-        return rows
+        return {
+            row['Id']: [
+                row['GeocodeResponse/Point/Latitude'],
+                row['GeocodeResponse/Point/Longitude'],
+            ]
+            for row in csv.DictReader(result)
+        }
 
 
 if __name__ == '__main__':

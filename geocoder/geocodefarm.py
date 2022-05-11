@@ -22,14 +22,12 @@ class GeocodeFarmResult(OneResult):
 
     @property
     def lat(self):
-        lat = self._coordinates.get('latitude')
-        if lat:
+        if lat := self._coordinates.get('latitude'):
             return float(lat)
 
     @property
     def lng(self):
-        lng = self._coordinates.get('longitude')
-        if lng:
+        if lng := self._coordinates.get('longitude'):
             return float(lng)
 
     @property
@@ -142,7 +140,7 @@ class GeocodeFarmQuery(MultipleResultsQuery):
 
     def _catch_errors(self, json_response):
         status = json_response['geocoding_results']['STATUS'].get('status')
-        if not status == 'SUCCESS':
+        if status != 'SUCCESS':
             self.error = status
 
         return self.error
@@ -175,20 +173,17 @@ class GeocodeFarmQuery(MultipleResultsQuery):
 
     @property
     def usage_limit(self):
-        usage_limit = self.api_account.get('usage_limit')
-        if usage_limit:
+        if usage_limit := self.api_account.get('usage_limit'):
             return int(usage_limit)
 
     @property
     def used_today(self):
-        used_today = self.api_account.get('used_today')
-        if used_today:
+        if used_today := self.api_account.get('used_today'):
             return int(used_today)
 
     @property
     def used_total(self):
-        used_total = self.api_account.get('used_total')
-        if used_total:
+        if used_total := self.api_account.get('used_total'):
             return int(used_total)
 
     @property

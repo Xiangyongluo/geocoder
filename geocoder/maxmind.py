@@ -124,8 +124,7 @@ class MaxmindQuery(MultipleResultsQuery):
         self.url = self._URL.format(location)
 
     def _catch_errors(self, json_response):
-        error = json_response.get('error')
-        if error:
+        if error := json_response.get('error'):
             self.error = json_response.get('code')
 
         return self.error

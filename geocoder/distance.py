@@ -20,8 +20,9 @@ def Distance(*args, **kwargs):
 
     for location in args:
         if last:
-            distance = haversine(Location(last), Location(location), **kwargs)
-            if distance:
+            if distance := haversine(
+                Location(last), Location(location), **kwargs
+            ):
                 total += distance
         last = location
 
@@ -42,26 +43,6 @@ def haversine(point1, point2, **kwargs):
 
     """
 
-    lookup_units = {
-        'miles': 'miles',
-        'mile': 'miles',
-        'mi': 'miles',
-        'ml': 'miles',
-        'kilometers': 'kilometers',
-        'kilometres': 'kilometers',
-        'kilometer': 'kilometers',
-        'kilometre': 'kilometers',
-        'km': 'kilometers',
-        'meters': 'meters',
-        'metres': 'meters',
-        'meter': 'meters',
-        'metre': 'meters',
-        'm': 'meters',
-        'feet': 'feet',
-        'f': 'feet',
-        'ft': 'feet',
-    }
-
     if point1.ok and point2.ok:
         # convert all latitudes/longitudes from decimal degrees to radians
         lat1, lng1, lat2, lng2 = list(map(radians, point1.latlng + point2.latlng))
@@ -79,6 +60,26 @@ def haversine(point1, point2, **kwargs):
             'feet': h * 0.621371 * 5280,
             'meters': h * 1000,
             'kilometers': h,
+        }
+
+        lookup_units = {
+            'miles': 'miles',
+            'mile': 'miles',
+            'mi': 'miles',
+            'ml': 'miles',
+            'kilometers': 'kilometers',
+            'kilometres': 'kilometers',
+            'kilometer': 'kilometers',
+            'kilometre': 'kilometers',
+            'km': 'kilometers',
+            'meters': 'meters',
+            'metres': 'meters',
+            'meter': 'meters',
+            'metre': 'meters',
+            'm': 'meters',
+            'feet': 'feet',
+            'f': 'feet',
+            'ft': 'feet',
         }
 
         if units in lookup_units:

@@ -47,8 +47,7 @@ class MapquestBatch(MultipleResultsQuery):
         }
 
     def _adapt_results(self, json_response):
-        results = json_response.get('results', [])
-        if results:
+        if results := json_response.get('results', []):
             return [result['locations'][0] for result in results]
 
         return []

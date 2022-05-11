@@ -103,7 +103,7 @@ class USCensusBatch(MultipleResultsQuery):
 
         except (requests.exceptions.RequestException, LookupError) as err:
             # store real status code and error
-            self.error = u'ERROR - {}'.format(str(err))
+            self.error = f'ERROR - {str(err)}'
             LOGGER.error("Status code %s from %s: %s",
                          self.status_code, self.url, self.error)
 
@@ -112,18 +112,17 @@ class USCensusBatch(MultipleResultsQuery):
     def _adapt_results(self, response):
         result = csv_io(csv_decode(response))
 
-        rows = {}
-        for row in csv.reader(result):
-            if row[2] == 'Match':
-                rows[row[0]] = [row[4], row[5]]
-
-        return rows
+        return {
+            row[0]: [row[4], row[5]]
+            for row in csv.reader(result)
+            if row[2] == 'Match'
+        }
 
     def _parse_results(self, response):
         rows = self._adapt_results(response)
 
         # re looping through the results to give them back in their original order
-        for idx in range(0, self.locations_length):
+        for idx in range(self.locations_length):
             self.add(self.one_result(rows.get(str(idx), None)))
 
         self.current_result = len(self) > 0 and self[0]

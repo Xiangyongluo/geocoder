@@ -129,9 +129,7 @@ class HereQuery(MultipleResultsQuery):
             'language': kwargs.get('language', 'en'),
         }
 
-        # bounding box if present
-        bbox = kwargs.get('bbox')
-        if bbox:
+        if bbox := kwargs.get('bbox'):
             bbox = BBox(bbox=bbox)
             # do not forget to convert bbox to mapbox expectations...
             params['bbox'] = u'{north},{west};{south},{east}'.format(
@@ -149,7 +147,7 @@ class HereQuery(MultipleResultsQuery):
 
     def _catch_errors(self, json_response):
         status = json_response.get('type')
-        if not status == 'OK':
+        if status != 'OK':
             self.error = status
 
         return self.error

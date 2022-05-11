@@ -91,7 +91,7 @@ class GaodeReverse(GaodeQuery):
     def _build_params(self, location, provider_key, **kwargs):
         location = Location(location)
         return {
-            'location': str(location.lng) + ',' + str(location.lat),
+            'location': f'{str(location.lng)},{str(location.lat)}',
             'output': 'json',
             'key': provider_key,
         }

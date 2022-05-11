@@ -119,8 +119,7 @@ class OneResult(object):
         for key in dir(self):
             if not key.startswith('_') and key not in self._TO_EXCLUDE:
                 self.fieldnames.append(key)
-                value = getattr(self, key)
-                if value:
+                if value := getattr(self, key):
                     self.json[key] = value
         # Add OK attribute even if value is "False"
         self.json['ok'] = self.ok
@@ -142,11 +141,11 @@ class OneResult(object):
             print(u'\n', file=output)
             print(u'From provider\n', file=output)
             print(u'-----------\n', file=output)
-            print(str(json.dumps(self.raw, indent=4)), file=output)
+            print(json.dumps(self.raw, indent=4), file=output)
             print(u'\n', file=output)
             print(u'Cleaned json\n', file=output)
             print(u'-----------\n', file=output)
-            print(str(json.dumps(self.json, indent=4)), file=output)
+            print(json.dumps(self.json, indent=4), file=output)
             print(u'\n', file=output)
             print(u'OSM Quality\n', file=output)
             print(u'-----------\n', file=output)
@@ -179,25 +178,24 @@ class OneResult(object):
             return [osm_count, fields_count]
 
     def _get_bbox(self, south, west, north, east):
-        if all([south, east, north, west]):
-            # South Latitude, West Longitude, North Latitude, East Longitude
-            self.south = float(south)
-            self.west = float(west)
-            self.north = float(north)
-            self.east = float(east)
+        if not all([south, east, north, west]):
+            return {}
+        # South Latitude, West Longitude, North Latitude, East Longitude
+        self.south = float(south)
+        self.west = float(west)
+        self.north = float(north)
+        self.east = float(east)
 
-            # Bounding Box Corners
-            self.northeast = [self.north, self.east]
-            self.northwest = [self.north, self.west]
-            self.southwest = [self.south, self.west]
-            self.southeast = [self.south, self.east]
+        self.northwest = [self.north, self.west]
+        self.southwest = [self.south, self.west]
+        self.southeast = [self.south, self.east]
 
-            # GeoJSON bbox
-            self.westsouth = [self.west, self.south]
-            self.eastnorth = [self.east, self.north]
+        # GeoJSON bbox
+        self.westsouth = [self.west, self.south]
+        self.eastnorth = [self.east, self.north]
 
-            return dict(northeast=self.northeast, southwest=self.southwest)
-        return {}
+        self.northeast = [self.north, self.east]
+        return dict(northeast=self.northeast, southwest=self.southwest)
 
     @property
     def confidence(self):
@@ -222,15 +220,13 @@ class OneResult(object):
 
     @property
     def geometry(self):
-        if self.ok:
-            return {
-                'type': 'Point',
-                'coordinates': [self.x, self.y]}
-        return {}
+        return (
+            {'type': 'Point', 'coordinates': [self.x, self.y]} if self.ok else {}
+        )
 
     @property
     def osm(self):
-        osm = dict()
+        osm = {}
         if self.ok:
             osm['x'] = self.x
             osm['y'] = self.y
@@ -246,9 +242,8 @@ class OneResult(object):
                 osm['addr:country'] = self.country
             if self.postal:
                 osm['addr:postal'] = self.postal
-            if hasattr(self, 'population'):
-                if self.population:
-                    osm['population'] = self.population
+            if hasattr(self, 'population') and self.population:
+                osm['population'] = self.population
         return osm
 
     @property
@@ -266,21 +261,15 @@ class OneResult(object):
 
     @property
     def wkt(self):
-        if self.ok:
-            return 'POINT({x} {y})'.format(x=self.x, y=self.y)
-        return ''
+        return 'POINT({x} {y})'.format(x=self.x, y=self.y) if self.ok else ''
 
     @property
     def xy(self):
-        if self.ok:
-            return [self.lng, self.lat]
-        return []
+        return [self.lng, self.lat] if self.ok else []
 
     @property
     def latlng(self):
-        if self.ok:
-            return [self.lat, self.lng]
-        return []
+        return [self.lat, self.lng] if self.ok else []
 
     @property
     def y(self):
@@ -438,7 +427,7 @@ class MultipleResultsQuery(MutableSequence):
         elif len(self) == 1:
             return base_repr.format(repr(self[0]))
         else:
-            return base_repr.format(u'#%s results' % len(self))
+            return base_repr.format(f'#{len(self)} results')
 
     def _build_headers(self, provider_key, **kwargs):
         """Will be overridden according to the targetted web service"""
@@ -495,7 +484,7 @@ class MultipleResultsQuery(MutableSequence):
 
         except requests.exceptions.RequestException as err:
             # store real status code and error
-            self.error = u'ERROR - {}'.format(str(err))
+            self.error = f'ERROR - {str(err)}'
             LOGGER.error("Status code %s from %s: %s",
                          self.status_code, self.url, self.error)
 
@@ -549,16 +538,12 @@ class MultipleResultsQuery(MutableSequence):
     @property
     def geojson(self):
         geojson_results = [result.geojson for result in self]
-        features = {
-            'type': 'FeatureCollection',
-            'features': geojson_results
-        }
-        return features
+        return {'type': 'FeatureCollection', 'features': geojson_results}
 
     def debug(self, verbose=True):
         with StringIO() as output:
             print(u'===\n', file=output)
-            print(str(repr(self)), file=output)
+            print(repr(self), file=output)
             print(u'===\n', file=output)
             print(u'\n', file=output)
             print(u'#res: {}\n'.format(len(self)), file=output)

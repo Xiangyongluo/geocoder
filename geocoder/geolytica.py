@@ -18,14 +18,12 @@ class GeolyticaResult(OneResult):
 
     @property
     def lat(self):
-        lat = self.raw.get('latt', '').strip()
-        if lat:
+        if lat := self.raw.get('latt', '').strip():
             return float(lat)
 
     @property
     def lng(self):
-        lng = self.raw.get('longt', '').strip()
-        if lng:
+        if lng := self.raw.get('longt', '').strip():
             return float(lng)
 
     @property
@@ -82,11 +80,11 @@ class GeolyticaQuery(MultipleResultsQuery):
             'geoit': 'xml'
         }
         if 'strictmode' in kwargs:
-            params.update({'strictmode': kwargs.pop('strictmode')})
+            params['strictmode'] = kwargs.pop('strictmode')
         if 'strict' in kwargs:
-            params.update({'strict': kwargs.pop('strict')})
+            params['strict'] = kwargs.pop('strict')
         if 'auth' in kwargs:
-            params.update({'auth': kwargs.pop('auth')})
+            params['auth'] = kwargs.pop('auth')
         return params
 
     def _adapt_results(self, json_response):

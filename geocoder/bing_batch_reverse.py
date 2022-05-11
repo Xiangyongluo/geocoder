@@ -18,32 +18,27 @@ class BingBatchReverseResult(BingBatchResult):
 
     @property
     def address(self):
-        address = self._content
-        if address:
+        if address := self._content:
             return address[0]
 
     @property
     def city(self):
-        city = self._content
-        if city:
+        if city := self._content:
             return city[1]
 
     @property
     def postal(self):
-        postal = self._content
-        if postal:
+        if postal := self._content:
             return postal[2]
 
     @property
     def state(self):
-        state = self._content
-        if state:
+        if state := self._content:
             return state[3]
 
     @property
     def country(self):
-        country = self._content
-        if country:
+        if country := self._content:
             return country[4]
 
     @property
@@ -93,17 +88,16 @@ class BingBatchReverse(BingBatch):
         # Skipping first line with Bing header
         next(result)
 
-        rows = {}
-        for row in csv.DictReader(result):
-            rows[row['Id']] = [
+        return {
+            row['Id']: [
                 row['GeocodeResponse/Address/FormattedAddress'],
                 row['GeocodeResponse/Address/Locality'],
                 row['GeocodeResponse/Address/PostalCode'],
                 row['GeocodeResponse/Address/AdminDistrict'],
-                row['GeocodeResponse/Address/CountryRegion']
+                row['GeocodeResponse/Address/CountryRegion'],
             ]
-
-        return rows
+            for row in csv.DictReader(result)
+        }
 
 
 if __name__ == '__main__':

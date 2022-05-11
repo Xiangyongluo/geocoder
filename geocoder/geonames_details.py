@@ -60,26 +60,22 @@ class GeonamesFullResult(GeonamesResult):
 
     @property
     def timeZoneId(self):
-        timezone = self.raw.get('timezone')
-        if timezone:
+        if timezone := self.raw.get('timezone'):
             return timezone.get('timeZoneId')
 
     @property
     def timeZoneName(self):
-        timezone = self.raw.get('timezone')
-        if timezone:
+        if timezone := self.raw.get('timezone'):
             return timezone.get('timeZoneId')
 
     @property
     def rawOffset(self):
-        timezone = self.raw.get('timezone')
-        if timezone:
+        if timezone := self.raw.get('timezone'):
             return timezone.get('gmtOffset')
 
     @property
     def dstOffset(self):
-        timezone = self.raw.get('timezone')
-        if timezone:
+        if timezone := self.raw.get('timezone'):
             return timezone.get('dstOffset')
 
     @property

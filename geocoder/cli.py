@@ -30,7 +30,6 @@ units = ['kilometers', 'miles', 'feet', 'meters']
 @click.option('--url', default='')
 @click.option('--proxies')
 @click.option('--key')
-# following are for Tamu provider
 @click.option('--city', '-c', default='')
 @click.option('--state', '-s', default='')
 @click.option('--zipcode', '-z', default='')
@@ -42,8 +41,7 @@ def cli(location, **kwargs):
     # Read Standard Input
     # $ cat foo.txt | geocode
     try:
-        for line in fileinput.input():
-            locations.append(line.strip())
+        locations.extend(line.strip() for line in fileinput.input())
     except:
         pass
 

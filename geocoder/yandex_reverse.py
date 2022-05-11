@@ -52,7 +52,7 @@ class YandexReverse(YandexQuery):
 
     def _build_params(self, location, provider_key, **kwargs):
         x, y = Location(location).xy
-        self.location = u'{}, {}'.format(x, y)
+        self.location = f'{x}, {y}'
         return {
             'geocode': self.location,
             'lang': kwargs.get('lang', 'en-US'),

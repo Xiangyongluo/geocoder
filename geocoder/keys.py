@@ -45,7 +45,7 @@ class CanadapostKeyLazySingleton(object):
         key = kwargs.get('key')
         canadapost_key = os.environ.get('CANADAPOST_API_KEY')
         if key or canadapost_key:
-            return key if key else canadapost_key
+            return key or canadapost_key
 
         # fallback
         try:
@@ -53,13 +53,12 @@ class CanadapostKeyLazySingleton(object):
             timeout = kwargs.get('timeout', 5.0)
             proxies = kwargs.get('proxies', '')
             r = requests.get(url, timeout=timeout, proxies=proxies)
-            match = cls.CANADAPOST_KEY_REGEX.search(r.text)
-            if match:
+            if match := cls.CANADAPOST_KEY_REGEX.search(r.text):
                 return match.group(1)
             else:
                 raise ValueError('No API Key found')
         except Exception as err:
-            raise ValueError('Could not retrieve API Key: %s' % err)
+            raise ValueError(f'Could not retrieve API Key: {err}')
 
 
 canadapost_key_getter = CanadapostKeyLazySingleton()

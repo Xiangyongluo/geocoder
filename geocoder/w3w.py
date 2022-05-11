@@ -12,14 +12,12 @@ class W3WResult(OneResult):
 
     @property
     def lat(self):
-        position = self.raw.get('geometry')
-        if position:
+        if position := self.raw.get('geometry'):
             return position['lat']
 
     @property
     def lng(self):
-        position = self.raw.get('geometry')
-        if position:
+        if position := self.raw.get('geometry'):
             return position['lng']
 
     @property
